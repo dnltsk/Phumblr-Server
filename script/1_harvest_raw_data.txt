@@ -1,0 +1,2 @@
+- execute HarvestFlickrTask to harvest Flickr data
+- execute HarvestWikipediaTask to harvest Wikipedia data

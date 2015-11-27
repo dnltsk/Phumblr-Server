@@ -1,0 +1,5 @@
+- import harvested / optimized flickr.csv into QGIS
+- convert data to UTM33N
+- filter out photos with less then 10 views
+- create heatmap via Heatmap plugin see http://www.qgistutorials.com/de/docs/creating_heatmaps.html
+  best results with "Radius"=50 and "Cell size X"=10
