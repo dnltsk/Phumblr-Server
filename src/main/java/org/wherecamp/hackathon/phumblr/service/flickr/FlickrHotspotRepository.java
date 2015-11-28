@@ -17,14 +17,15 @@ public class FlickrHotspotRepository {
     HotspotPojo hotspot = new HotspotPojo();
     FlickrDatabaseDatasource ds = new FlickrDatabaseDatasource();
 
-    Integer gid = ds.loadHotspotGid(lat, lon);
-    if(gid==null){
+    Integer hotspotId = ds.loadHotspotGid(lat, lon);
+    if(hotspotId==null){
       //no hotspot -> return empty hotspot
       return hotspot;
     }
 
-    hotspot.flickr = loadPhotoUrls(ds, gid);
-    hotspot.wiki = loadWikis(gid);
+    hotspot.hotspotId = hotspotId;
+    hotspot.flickr = loadPhotoUrls(ds, hotspotId);
+    hotspot.wiki = loadWikis(hotspotId);
 
     return hotspot;
   }

@@ -61,9 +61,9 @@ public class FlickrDatabaseDatasource {
   }
 
   public List<FlickrPojo> loadRelevantPhotos(Integer gid, int amount) throws SQLException {
-    StringBuffer sql = new StringBuffer()
+    /*StringBuffer sql = new StringBuffer()
         .append(" select distinct")
-        .append(" f.photo_id, f.views")
+        .append(" f.owner, f.photo_id, f.views, f.date_taken")
         .append(" from")
         .append(" flickr f, flickr_heatmap h")
         .append(" where")
@@ -71,6 +71,15 @@ public class FlickrDatabaseDatasource {
         .append(" and ST_Contains(h.geom, f.geom)")
         .append(" order by f.views desc")
         .append(" limit "+amount);
+    */
+    StringBuffer sql = new StringBuffer()
+        .append("select f.owner, f.views, f.photo_id " +
+            "from flickr f, hotspot_cache c " +
+            "where c.hotspot_id = "+gid +
+            " and f.owner = c.owner " +
+            " and f.views = c.max_views " +
+            "order by f.views desc " +
+            "limit "+amount);
 
     LOGGER.info(sql.toString());
 

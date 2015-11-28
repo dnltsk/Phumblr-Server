@@ -29,3 +29,40 @@ psql -h localhost -d phumblr -U postgres -f data/shp2pgsql/flickr_heat_gt10_500.
 #CREATE INDEX flickr_gix ON flickr USING GIST (geom);
 #CREATE INDEX flickr_heatmap_gix ON flickr_heatmap USING GIST (geom);
 #CREATE INDEX wiki_gix ON wiki USING GIST (geom);
+
+CREATE INDEX ON flickr (owner);
+CREATE INDEX ON flickr (views);
+CREATE INDEX ON hotspot_cache (max_views);
+CREATE INDEX ON hotspot_cache (owner);
+CREATE INDEX ON hotspot_cache (hotspot_id);
+
+
+CREATE INDEX flickr_gix ON flickr USING GIST (geom);
+CREATE INDEX flickr_heatmap_gix ON flickr_heatmap USING GIST (geom);
+CREATE INDEX wiki_gix ON wiki USING GIST (geom);
+
+drop table hotspot_cache;
+create table hotspot_cache as
+select distinct
+	h.gid as hotspot_id,
+	f.owner as owner,
+	max(f.views) max_views
+from flickr f, flickr_heatmap h
+where ST_Contains(h.geom, f.geom)
+group by hotspot_id, owner
+
+select f.owner, f.views, f.photo_id
+from flickr f, hotspot_cache c
+where 	c.hotspot_id = 45
+	and f.owner = c.owner
+	and f.views = c.max_views
+order by f.views desc
+
+
+select f.owner, f.views, f.photo_id
+from flickr f, hotspot_cache c
+where 	c.hotspot_id = 45
+	and f.owner = c.owner
+	and f.views = c.max_views
+order by f.views desc
+limit 5
