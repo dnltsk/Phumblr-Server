@@ -7,6 +7,7 @@ import org.wherecamp.hackathon.phumblr.harvest.UrlContentReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,9 +22,9 @@ public class WikiSpatialHarvester {
   public List<WikiHarvestPojo> queryBbox(List<Pair<String, String>> queryGrid, String[] bbox, int col, int row) throws Exception {
     queryGrid.add(new Pair<String, String>(bbox[0], bbox[1]));
     queryGrid.add(new Pair<String, String>(bbox[2], bbox[3]));
-    URL url = new  URL("https://tools.wmflabs.org/wp-world/marks.php?LANG=en&coats=0&thumbs=0" +
+    URL url = new  URL("https://tools.wmflabs.org/wp-world/marks.php?LANG=de&coats=0&thumbs=0" +
         "&bbox="+bbox[0]+","+bbox[1]+","+bbox[2]+","+bbox[3]);
-    //executeWithGeotools(bbox, col, row, url);
+    LOGGER.info("spatial: "+url.toString());
     List<WikiHarvestPojo> harvestedWikis = executeWithText(url);
     return harvestedWikis;
   }
@@ -45,7 +46,9 @@ public class WikiSpatialHarvester {
          .replaceAll("(?i)<coordinates>", "<coordinates>")
          .replaceAll("(?i)</coordinates>", "</coordinates>")
          .replaceAll("(?i)<styleurl>", "<styleurl>")
-         .replaceAll("(?i)</styleurl>", "</styleurl>");
+         .replaceAll("(?i)</styleurl>", "</styleurl>")
+         .replaceAll("(?i)<description>", "<description>")
+         .replaceAll("(?i)</description>", "</description>");
       // Get <Placemark> tag
      String[] kmlPlacemarks = kmlText.split("</Placemark>");
      if (kmlPlacemarks.length > 0) {
@@ -61,6 +64,7 @@ public class WikiSpatialHarvester {
        String tmpPlacemarkName;
        String tmpPlacemarkCoordinates;
        String tmpPlacemarkStyle;
+       String tmpPlacemarkDesc;
        for (String kmlPlacemark: kmlPlacemarks)
          if ((kmlPlacemark.indexOf("<name>") > -1 && kmlPlacemark.indexOf("</name>") > -1) &&
              (kmlPlacemark.indexOf("<coordinates>") > -1 && kmlPlacemark.indexOf("</coordinates>") > -1)) {
@@ -69,10 +73,20 @@ public class WikiSpatialHarvester {
            harvestedWiki.lon = Double.parseDouble(tmpPlacemarkCoordinates.split(",")[0]);
            harvestedWiki.lat = Double.parseDouble(tmpPlacemarkCoordinates.split(",")[1]);
            tmpPlacemarkName = kmlPlacemark.substring(kmlPlacemark.indexOf("<name>") + 6, kmlPlacemark.indexOf("</name>"));
-           harvestedWiki.humanReadableTitle = tmpPlacemarkName;
-           harvestedWiki.uniqueTitle = URLEncoder.encode(tmpPlacemarkName, "UTF-8");
+           //harvestedWiki.humanReadableTitle = tmpPlacemarkName;
+           //harvestedWiki.uniqueTitle = URLEncoder.encode(tmpPlacemarkName, "UTF-8");
            tmpPlacemarkStyle = kmlPlacemark.substring(kmlPlacemark.indexOf("<styleurl>") + 10, kmlPlacemark.indexOf("</styleurl>"));
-           harvestedWiki.type = tmpPlacemarkStyle.replace("#","");
+           harvestedWiki.type = tmpPlacemarkStyle.replace("#", "");
+           tmpPlacemarkDesc = kmlPlacemark.substring(kmlPlacemark.indexOf("<description>") + 13, kmlPlacemark.indexOf("</description>"));
+
+           String startTag = "de.wikipedia.org/wiki/";
+           String endTag = "\">";
+
+           int from = tmpPlacemarkDesc.indexOf(startTag) + startTag.length();
+           int to = tmpPlacemarkDesc.indexOf(endTag);
+           harvestedWiki.uniqueTitle = tmpPlacemarkDesc.substring(from,to);
+           harvestedWiki.humanReadableTitle = URLDecoder.decode(harvestedWiki.uniqueTitle, "UTF-8");
+
            harvestedWikis.add(harvestedWiki);
          }
      }

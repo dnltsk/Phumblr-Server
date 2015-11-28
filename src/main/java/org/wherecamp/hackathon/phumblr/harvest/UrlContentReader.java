@@ -9,6 +9,9 @@ import java.net.URLConnection;
 
 /**
  * Created by danielt on 27.11.15.
+ *
+ * Source: http://stackoverflow.com/questions/15636303/extract-coordinates-from-kml-file-in-java
+ *
  */
 public class UrlContentReader {
 
@@ -25,10 +28,6 @@ public class UrlContentReader {
         sb.append(charArray, 0, numCharsRead);
       }
       String result = sb.toString();
-
-      System.out.println("*** BEGIN ***");
-      System.out.println(result);
-      System.out.println("*** END ***");
       return result;
     } catch (MalformedURLException e) {
       e.printStackTrace();

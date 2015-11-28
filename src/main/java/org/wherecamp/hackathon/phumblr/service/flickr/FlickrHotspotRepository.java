@@ -36,10 +36,13 @@ public class FlickrHotspotRepository {
     WikiDatabaseDatasource wikiSource = new WikiDatabaseDatasource();
     List<WikiPojo> wikisInside = wikiSource.loadWikisInsideHotspot(gid, amount);
     wikis.addAll(wikisInside);
-    if(wikisInside.size()<amount){
-      List<WikiPojo> wikisAround = wikiSource.loadWikisAroundHotspot(gid,maxDistance,amount-wikisInside.size());
+    if(wikisInside.size()<amount) {
+      List<WikiPojo> wikisAround = wikiSource.loadWikisAroundHotspot(gid, maxDistance, amount - wikisInside.size());
       wikis.addAll(wikisAround);
     }
+
+
+
     return wikis;
   }
 

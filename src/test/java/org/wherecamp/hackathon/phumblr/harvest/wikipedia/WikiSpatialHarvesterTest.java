@@ -1,8 +1,8 @@
 package org.wherecamp.hackathon.phumblr.harvest.wikipedia;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 /**
@@ -10,19 +10,30 @@ import java.util.List;
  */
 public class WikiSpatialHarvesterTest {
 
+  @Ignore
   @Test
-  public void kml_is_parsed_correctly() throws Exception {
+  public void bundesliga_is_parsed_correctly() throws Exception {
     //given
-    String kmlText = getKmlMock();
+    String kmlText = getBundesligaMock();
 
     //when
     List<WikiHarvestPojo> harvestedWikis = new WikiSpatialHarvester().executeWithText(kmlText);
     harvestedWikis = new WikiTextHarvester().queryText(harvestedWikis);
   }
 
+    @Test
+    public void landmarklists_kml_is_parsed_correctly() throws Exception {
+        //given
+        String kmlText = getListenMock();
+
+        //when
+        List<WikiHarvestPojo> harvestedWikis = new WikiSpatialHarvester().executeWithText(kmlText);
+
+    }
 
 
-  private String getKmlMock(){
+
+  private String getBundesligaMock(){
     return "\n" +
         "\n" +
         "<kml xmlns=\"http://www.opengis.net/kml/2.2\">\n" +
@@ -112,5 +123,51 @@ public class WikiSpatialHarvesterTest {
         "</Document>\n" +
         "</kml>\n";
   }
+    
+    
+    private String getListenMock(){
+        return "\n" +
+            "\n" +
+            "<kml xmlns=\"http://www.opengis.net/kml/2.2\">\n" +
+            "<Document>\n" +
+            "  <name>cities.kml</name>\n" +
+            "  <visibility>0</visibility>\n" +
+            "  <open>1</open>\n" +
+            "\n" +
+            "\n" +
+            "\n" +
+            "\n" +
+            "\n" +
+            "<Style id=\"landmarklist\">\n" +
+            "    <IconStyle>\n" +
+            "      <scale>0.6</scale>\n" +
+            "      <color>aaaaaaff</color>\n" +
+            "      <Icon>\n" +
+            "        <href>//tools.wmflabs.org/wp-world/icons/W-list.png</href>\n" +
+            "       </Icon>\n" +
+            "    </IconStyle>\n" +
+            "    <LabelStyle>\n" +
+            "      <color>ff00aaff</color>\n" +
+            "      <scale>0.8</scale>\n" +
+            "    </LabelStyle>\n" +
+            "  </Style>\n" +
+            "  <Placemark><name>#Eichkampstraße</name> <visibility>1</visibility>  <description><![CDATA[ <a target=\"_blank\" href=\"//de.wikipedia.org/wiki/Liste%20der%20Stra%C3%9Fen%20und%20Pl%C3%A4tze%20in%20Berlin-Grunewald%23Eichkampstra%C3%9Fe\">Liste der Straßen und Plätze in Berlin-Grunewald</a><br><div style=\" padding-top: 0.5em; padding-left: 0.5em; width:190px;height:250px; border:10px;\" > <img alt=\"2000-03-26_Bahnhof_Grunewald.jpg\"  src=\"//upload.wikimedia.org/wikipedia/commons/thumb/b/bc/2000-03-26_Bahnhof_Grunewald.jpg/180px-2000-03-26_Bahnhof_Grunewald.jpg\"></a></div><br><small>Source: de<br> style: landmarklist </small>]]></description>     <styleUrl>#landmarklist</styleUrl>    <Point><coordinates>13.257774,52.487323,0</coordinates>\n" +
+            " </Point>  </Placemark>\n" +
+            "  <Placemark><name>#Auerbachstraße</name> <visibility>1</visibility>  <description><![CDATA[ <a target=\"_blank\" href=\"//de.wikipedia.org/wiki/Liste%20der%20Stra%C3%9Fen%20und%20Pl%C3%A4tze%20in%20Berlin-Grunewald%23Auerbachstra%C3%9Fe\">Liste der Straßen und Plätze in Berlin-Grunewald</a><br><div style=\" padding-top: 0.5em; padding-left: 0.5em; width:190px;height:250px; border:10px;\" > <img alt=\"2000-03-26_Bahnhof_Grunewald.jpg\"  src=\"//upload.wikimedia.org/wikipedia/commons/thumb/b/bc/2000-03-26_Bahnhof_Grunewald.jpg/180px-2000-03-26_Bahnhof_Grunewald.jpg\"></a></div><br><small>Source: de<br> style: landmarklist </small>]]></description>     <styleUrl>#landmarklist</styleUrl>    <Point><coordinates>13.259856,52.486857,0</coordinates>\n" +
+            " </Point>  </Placemark>\n" +
+            "\n" +
+            " <Placemark>\n" +
+            "      <name>Info</name>\n" +
+            "      <visibility>1</visibility>\n" +
+            "      <description><![CDATA[This is a extract from <a href=\"//en.wikipedia.org/wiki/Hauptseite\">Wikipedia</a> from 42 languages, it use the Interwikilinks to generarte all the other languages. See for more infos: <a href=\"//de.wikipedia.org/wiki/Wikipedia:WikiProjekt_Georeferenzierung/Wikipedia-World/en\">Wikipedia-World</a> \n" +
+            "\t\t   <p>Created in 0.007+0.014+0<p>(SELECT \"T_de\" as title, pop,lon,lat,style,lang,image,imagejpg,name,arms FROM wp_coords_red0  WHERE the_geom && \n" +
+            "ST_SetSRID(ST_MakeBox2D(ST_Point(13.2575,52.48548445237997), \n" +
+            "\t\t\tST_Point(13.260268445237998,52.48825289761797)),4326) and \"T_de\" IS NOT NULL  ORDER BY psize DESC LIMIT 80)  thumbs: 0 COATS: 0 \n" +
+            "]]></description>\n" +
+            "    </Placemark>\n" +
+            "\n" +
+            "</Document>\n" +
+            "</kml>\n";
+    }
 
 }

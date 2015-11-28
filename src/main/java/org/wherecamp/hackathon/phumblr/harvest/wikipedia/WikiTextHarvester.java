@@ -1,5 +1,6 @@
 package org.wherecamp.hackathon.phumblr.harvest.wikipedia;
 
+import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -14,7 +15,9 @@ import java.util.List;
  */
 public class WikiTextHarvester {
 
-  String wikiApi = "https://en.wikipedia.org/w/api.php?action=query&prop=extracts|images&format=json&explaintext=&titles=";
+  Logger LOGGER = Logger.getLogger(WikiTextHarvester.class);
+
+  String wikiApi = "https://de.wikipedia.org/w/api.php?action=query&prop=extracts|images&format=json&explaintext=&titles=";
 
   private final String TAG_QUERY = "query";
   private final String TAG_PAGES = "pages";
@@ -29,12 +32,21 @@ public class WikiTextHarvester {
   }
 
   private void enrichHarvestedWiki(WikiHarvestPojo harvestedWiki) throws MalformedURLException, ParseException {
-    URL wikiApiRequest = new URL(wikiApi+harvestedWiki.uniqueTitle);
+    String url = wikiApi+harvestedWiki.uniqueTitle;
+    URL wikiApiRequest = new URL(url);
+    LOGGER.info("text: "+url);
     String wikiApiResponse = UrlContentReader.urlContentAsString(wikiApiRequest);
     JSONObject json = (JSONObject)new JSONParser().parse(wikiApiResponse);
     JSONObject query = (JSONObject)json.get(TAG_QUERY);
     JSONObject pages = (JSONObject)query.get(TAG_PAGES);
-    JSONObject pageid = (JSONObject)pages.get(pages.keySet().iterator().next());
-    harvestedWiki.sections = (String)pageid.get(TAG_EXTRACT);
+    String pageIdNumber = (String)pages.keySet().iterator().next();
+    if(pageIdNumber != null && !pageIdNumber.equals("-1")){
+      JSONObject pageid = (JSONObject)pages.get(pageIdNumber);
+      harvestedWiki.sections = (String)pageid.get(TAG_EXTRACT);
+      LOGGER.info("sectionLength: "+harvestedWiki.sections.length());
+    }
+
+
+
   }
 }

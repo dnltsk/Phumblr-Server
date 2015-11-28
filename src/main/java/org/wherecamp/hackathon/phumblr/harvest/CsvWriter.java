@@ -76,7 +76,7 @@ public class CsvWriter {
 
     public void initWiki(){
         try {
-            writer.append("lat,lon,title,desc\n");
+            writer.append("title,lat,lon,type,sections\n");
         } catch (IOException e) {
             LOGGER.error("cannot init Wiki.", e);
         }
@@ -85,10 +85,11 @@ public class CsvWriter {
 
     public void addWiki(WikiHarvestPojo p) {
         try {
-            writer.append(Double.toString(p.lat)).append(";");
-            writer.append(Double.toString(p.lon)).append(";");
-            writer.append(StringEscapeUtils.escapeCsv(p.humanReadableTitle)).append(";");
-            writer.append(StringEscapeUtils.escapeCsv(p.abstractSection)).append(";");
+            writer.append(StringEscapeUtils.escapeCsv(p.humanReadableTitle)).append(",");
+            writer.append(Double.toString(p.lat)).append(",");
+            writer.append(Double.toString(p.lon)).append(",");
+            writer.append(StringEscapeUtils.escapeCsv(p.type)).append(",");
+            writer.append(StringEscapeUtils.escapeCsv(p.sections));
             writer.append("\n");
             writer.flush();
         } catch (IOException e) {

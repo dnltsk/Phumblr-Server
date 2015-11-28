@@ -50,6 +50,7 @@ public class HarvestWikipediaTask {
         };
         List<WikiHarvestPojo> harvestedWikis = spatialHarvester.queryBbox(queryGrid, bbox, col, row);
         harvestedWikis = textHarvester.queryText(harvestedWikis);
+        writeWikis(harvestedWikis);
       }
     }
     writer.close();
@@ -62,6 +63,11 @@ public class HarvestWikipediaTask {
     LOGGER.info("\n" + sb.toString());
   }
 
+  private void writeWikis(List<WikiHarvestPojo> harvestedWikis) {
+    for (WikiHarvestPojo harvestedWiki : harvestedWikis){
+      writer.addWiki(harvestedWiki);
+    }
+  }
 
 
   public static void main(String[] args) throws Exception {
