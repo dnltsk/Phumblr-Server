@@ -73,13 +73,15 @@ public class FlickrDatabaseDatasource {
         .append(" limit "+amount);
     */
     StringBuffer sql = new StringBuffer()
-        .append("select f.owner, f.views, f.photo_id " +
-            "from flickr f, hotspot_cache c " +
-            "where c.hotspot_id = "+gid +
+        .append("SELECT f.photo_id, max(f.views) as views, max(distinct(f.owner)) as owner "
+                //"select f.owner, f.views, f.photo_id " +
+            " from flickr f, hotspot_cache c " +
+            " where c.hotspot_id = "+gid +
             " and f.owner = c.owner " +
             " and f.views = c.max_views " +
-            "order by f.views desc " +
-            "limit "+amount);
+          //  "order by f.views desc " +
+            " group byf.photo_id order by views desc "
+            " limit "+amount);
 
     LOGGER.info(sql.toString());
 

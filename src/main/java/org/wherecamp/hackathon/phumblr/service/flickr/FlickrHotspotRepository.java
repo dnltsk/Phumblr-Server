@@ -49,7 +49,7 @@ public class FlickrHotspotRepository {
 
   private List<FlickrPojo> loadPhotoUrls(FlickrDatabaseDatasource ds, Integer gid) throws SQLException {
     int maxSize = 320;
-    List<FlickrPojo> photos = ds.loadRelevantPhotos(gid, 5);
+    List<FlickrPojo> photos = ds.loadRelevantPhotos(gid, 15);
     for(FlickrPojo photo : photos){
       photo.url = new FlickrApiDatasource().getPhotoUrl(photo.photoId, maxSize);
     }
