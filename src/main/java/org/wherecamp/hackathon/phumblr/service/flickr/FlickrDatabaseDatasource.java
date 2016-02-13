@@ -80,7 +80,7 @@ public class FlickrDatabaseDatasource {
             " and f.owner = c.owner " +
             " and f.views = c.max_views " +
           //  "order by f.views desc " +
-            " group byf.photo_id order by views desc "
+            " group by f.photo_id order by views desc "
             " limit "+amount);
 
     LOGGER.info(sql.toString());
