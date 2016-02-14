@@ -61,32 +61,11 @@ public class FlickrDatabaseDatasource {
   }
 
   public List<FlickrPojo> loadRelevantPhotos(Integer gid, int amount) throws SQLException {
-    /*StringBuffer sql = new StringBuffer()
-        .append(" select distinct")
-        .append(" f.owner, f.photo_id, f.views, f.date_taken")
-        .append(" from")
-        .append(" flickr f, flickr_heatmap h")
-        .append(" where")
-        .append(" h.gid = "+gid)
-        .append(" and ST_Contains(h.geom, f.geom)")
-        .append(" order by f.views desc")
-        .append(" limit "+amount);
-    */
-   /* StringBuffer sql = new StringBuffer()
-        .append("SELECT f.photo_id, max(f.views) as views "+
-            " from flickr f, hotspot_cache c " +
-            " where c.hotspot_id = "+gid +
-            " and f.owner = c.owner " +
-            " and f.views = c.max_views " +
-            " group by f.photo_id order by views desc " +
-            " limit "+amount);
-*/
-	  
+
 	  StringBuffer sql = new StringBuffer()
-		        .append("SELECT distinct f.photo_id, f.views as views "+
-	  "from hotspot_photo_cache h left join flickr f on f.photo_id = h.photo_id "+
+		        .append("SELECT distinct h.photo_id, f.views  as views "+
+	  "from hotspot_photo_cache h left join flickr f on h.photo_id = f.photo_id "+
 	  "where hotspot_id = " + gid +
-	  " and f.views > 5 "+
 	  " order by f.views desc "+
 	  " limit "+ amount);
 	  
@@ -97,7 +76,9 @@ public class FlickrDatabaseDatasource {
     ResultSet rs = null;
     try{
       stmt = conn.createStatement();
+      LOGGER.info("statement created");
       rs = stmt.executeQuery(sql.toString());
+      LOGGER.info("statement executed");
       List<FlickrPojo> photos = new ArrayList<>();
       while(rs.next()){
         FlickrPojo photo = new FlickrPojo();
@@ -105,6 +86,7 @@ public class FlickrDatabaseDatasource {
         photo.photoId = rs.getLong("photo_id");
         photos.add(photo);
       }
+      LOGGER.info("returning...");
       return photos;
     } catch (SQLException e) {
       LOGGER.error("error while loadRelevantPhotos: "+e.getLocalizedMessage(), e);

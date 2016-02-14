@@ -59,7 +59,10 @@ select h.gid as hotspot_id,
 photo_id,
 f.views
 from flickr f, flickr_heatmap h
-where ST_Contains(h.geom, f.geom);
+where ST_Contains(h.geom, f.geom)
+and views >=5
+group by photo_id, views, hotspot_id
+order by hotspot_id, views desc;
 
 CREATE INDEX hotspot_photo_id_idx
 ON hotspot_photo_cache
