@@ -51,6 +51,33 @@ from flickr f, flickr_heatmap h
 where ST_Contains(h.geom, f.geom)
 group by hotspot_id, owner
 
+
+-- create new chace for photoid
+drop table hotspot_photo_cache;
+create table hotspot_photo_cache as
+select h.gid as hotspot_id,
+photo_id,
+f.views
+from flickr f, flickr_heatmap h
+where ST_Contains(h.geom, f.geom);
+
+CREATE INDEX hotspot_photo_id_idx
+ON hotspot_photo_cache
+USING btree
+(hotspot_id);
+
+CREATE INDEX hotspot_photo_pid_idx
+ON hotspot_photo_cache
+USING btree
+(photo_id COLLATE pg_catalog."default");
+
+CREATE INDEX hotspot_photo_views_idx
+ON hotspot_photo_cache
+USING btree
+(views);
+
+
+
 select f.owner, f.views, f.photo_id
 from flickr f, hotspot_cache c
 where 	c.hotspot_id = 45

@@ -72,17 +72,24 @@ public class FlickrDatabaseDatasource {
         .append(" order by f.views desc")
         .append(" limit "+amount);
     */
-    StringBuffer sql = new StringBuffer()
+   /* StringBuffer sql = new StringBuffer()
         .append("SELECT f.photo_id, max(f.views) as views "+
-                //"select f.owner, f.views, f.photo_id " +
             " from flickr f, hotspot_cache c " +
             " where c.hotspot_id = "+gid +
             " and f.owner = c.owner " +
             " and f.views = c.max_views " +
-          //  "order by f.views desc " +
             " group by f.photo_id order by views desc " +
             " limit "+amount);
-
+*/
+	  
+	  StringBuffer sql = new StringBuffer()
+		        .append("SELECT distinct f.photo_id, f.views as views "+
+	  "from hotspot_photo_cache h left join flickr f on f.photo_id = h.photo_id "+
+	  "where hotspot_id = " + gid +
+	  " and f.views > 5 "+
+	  " order by f.views desc "+
+	  " limit "+ amount);
+	  
     LOGGER.info(sql.toString());
 
     Connection conn = PhumblrApplication.openPostgresConnection();
