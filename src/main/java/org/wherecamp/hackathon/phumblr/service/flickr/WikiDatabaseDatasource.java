@@ -1,11 +1,12 @@
 package org.wherecamp.hackathon.phumblr.service.flickr;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.wherecamp.hackathon.phumblr.service.PhumblrApplication;
 import org.wherecamp.hackathon.phumblr.service.WikiPojo;
 import org.wherecamp.hackathon.phumblr.service.WikiSection;
 
-import java.lang.reflect.Array;
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -23,6 +24,13 @@ public class WikiDatabaseDatasource {
 
   Logger LOGGER = Logger.getLogger(FlickrDatabaseDatasource.class);
 
+  @Autowired
+  DataSource dataSource;
+
+  public WikiDatabaseDatasource(DataSource dataSource){
+    this.dataSource = dataSource;
+  }
+
   public List<WikiPojo> loadWikisInsideHotspot(int hotspotGid, int amount) throws SQLException {
     StringBuffer sql = new StringBuffer()
         .append(" select distinct")
@@ -38,7 +46,7 @@ public class WikiDatabaseDatasource {
 
     LOGGER.info(sql.toString());
 
-    Connection conn = PhumblrApplication.openPostgresConnection();
+    Connection conn = dataSource.getConnection();//PhumblrApplication.openPostgresConnection();
     Statement stmt = null;
     ResultSet rs = null;
     try{
@@ -81,7 +89,7 @@ public class WikiDatabaseDatasource {
 
     LOGGER.info(sql.toString());
 
-    Connection conn = PhumblrApplication.openPostgresConnection();
+    Connection conn = dataSource.getConnection(); //PhumblrApplication.openPostgresConnection();
     Statement stmt = null;
     ResultSet rs = null;
     try{

@@ -8,16 +8,27 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.log4j.Logger;
+
+import javax.sql.DataSource;
+
 /**
  * Created by danielt on 27.11.15.
  */
 public class FlickrHotspotRepository {
 
-	Logger LOGGER = Logger.getLogger(FlickrHotspotRepository.class);
+  Logger LOGGER = Logger.getLogger(FlickrHotspotRepository.class);
+
+  private DataSource dataSource;
+  public FlickrHotspotRepository(DataSource dataSource){
+    this.dataSource = dataSource;
+
+  }
+
+
 	
   public HotspotPojo getHeatmap(double lat, double lon) throws SQLException {
     HotspotPojo hotspot = new HotspotPojo();
-    FlickrDatabaseDatasource ds = new FlickrDatabaseDatasource();
+    FlickrDatabaseDatasource ds = new FlickrDatabaseDatasource(dataSource);
 
     Integer hotspotId = ds.loadHotspotGid(lat, lon);
     if(hotspotId==null){
@@ -36,7 +47,7 @@ public class FlickrHotspotRepository {
     List<WikiPojo> wikis = new ArrayList<>();
     int amount = 5;
     int maxDistance = 500;
-    WikiDatabaseDatasource wikiSource = new WikiDatabaseDatasource();
+    WikiDatabaseDatasource wikiSource = new WikiDatabaseDatasource(dataSource);
     List<WikiPojo> wikisInside = wikiSource.loadWikisInsideHotspot(gid, amount);
     wikis.addAll(wikisInside);
     if(wikisInside.size()<amount) {
