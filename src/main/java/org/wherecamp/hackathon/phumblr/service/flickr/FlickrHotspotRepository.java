@@ -1,5 +1,6 @@
 package org.wherecamp.hackathon.phumblr.service.flickr;
 
+import org.wherecamp.hackathon.phumblr.service.FlickrConfig;
 import org.wherecamp.hackathon.phumblr.service.FlickrPojo;
 import org.wherecamp.hackathon.phumblr.service.HotspotPojo;
 import org.wherecamp.hackathon.phumblr.service.WikiPojo;
@@ -18,10 +19,12 @@ public class FlickrHotspotRepository {
 
   Logger LOGGER = Logger.getLogger(FlickrHotspotRepository.class);
 
-  private DataSource dataSource;
-  public FlickrHotspotRepository(DataSource dataSource){
-    this.dataSource = dataSource;
+  FlickrConfig flickrConfig;
 
+  private DataSource dataSource;
+  public FlickrHotspotRepository(DataSource dataSource, FlickrConfig flickrConfig){
+    this.dataSource = dataSource;
+    this.flickrConfig = flickrConfig;
   }
 
 
@@ -39,7 +42,7 @@ public class FlickrHotspotRepository {
     hotspot.hotspotId = hotspotId;
     hotspot.flickr = loadPhotoUrls(ds, hotspotId);
     hotspot.wiki = loadWikis(hotspotId);
-
+    LOGGER.info("loaded wikis");
     return hotspot;
   }
 
@@ -62,11 +65,13 @@ public class FlickrHotspotRepository {
 
   private List<FlickrPojo> loadPhotoUrls(FlickrDatabaseDatasource ds, Integer gid) throws SQLException {
     int maxSize = 320;
-    List<FlickrPojo> photos = ds.loadRelevantPhotos(gid, 5);
+    List<FlickrPojo> photos = ds.loadRelevantPhotos(gid, 3);
+    FlickrApiDatasource flickrData = new FlickrApiDatasource();
+    flickrData.setFlickrConfig(flickrConfig);
     for(FlickrPojo photo : photos){
-      photo.url = new FlickrApiDatasource().getPhotoUrl(photo.photoId, maxSize);
+      photo.url = flickrData.getPhotoUrl(photo.photoId, maxSize);
     }
-    LOGGER.info("loadPhotoUrls");
+    LOGGER.info("loadedPhotoUrls");
     return photos;
   }
 

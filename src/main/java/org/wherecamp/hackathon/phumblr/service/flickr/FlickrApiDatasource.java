@@ -6,6 +6,15 @@ import com.flickr4java.flickr.REST;
 import com.flickr4java.flickr.photos.PhotosInterface;
 import com.flickr4java.flickr.photos.Size;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
+import org.wherecamp.hackathon.phumblr.service.FlickrConfig;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -14,17 +23,33 @@ import java.util.ArrayList;
 /**
  * Created by danielt on 27.11.15.
  */
+
 public class FlickrApiDatasource {
 
   private Logger LOGGER = Logger.getLogger(FlickrApiDatasource.class);
 
-  private String flickrKey = "7ad8ddffead4f54320ac26f57ab8c6ea";
-  private String flickrSecureKey = "7eb755f2b10a6cd2";
   private PhotosInterface flickrInterface;
 
+  private FlickrConfig flickrConfig;
+
   FlickrApiDatasource(){
-    flickrInterface = new Flickr(flickrKey, flickrSecureKey, new REST()).getPhotosInterface();
+    super();
+    if(flickrConfig != null) {
+      flickrInterface = new Flickr(flickrConfig.getFlickrKey(), flickrConfig.getFlickrSecureKey(), new REST()).getPhotosInterface();
+    }
   }
+
+
+  FlickrApiDatasource(FlickrConfig flickrConfig){
+    this.flickrConfig = flickrConfig;
+    flickrInterface = new Flickr(flickrConfig.getFlickrKey(), flickrConfig.getFlickrSecureKey(), new REST()).getPhotosInterface();
+  }
+
+  public void setFlickrConfig(FlickrConfig flickrConfig) {
+    this.flickrConfig = flickrConfig;
+    flickrInterface = new Flickr(flickrConfig.getFlickrKey(), flickrConfig.getFlickrSecureKey(), new REST()).getPhotosInterface();
+  }
+
 
   public URL getPhotoUrl(Long photoId, int maxSize){
     try {

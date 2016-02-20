@@ -2,6 +2,10 @@ package org.wherecamp.hackathon.phumblr.service.flickr;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 import org.wherecamp.hackathon.phumblr.service.PhumblrApplication;
 import org.wherecamp.hackathon.phumblr.service.WikiPojo;
 import org.wherecamp.hackathon.phumblr.service.WikiSection;
@@ -20,12 +24,15 @@ import java.util.regex.Pattern;
 /**
  * Created by danielt on 27.11.15.
  */
+
 public class WikiDatabaseDatasource {
 
   Logger LOGGER = Logger.getLogger(FlickrDatabaseDatasource.class);
-
-  @Autowired
   DataSource dataSource;
+
+  public WikiDatabaseDatasource(){
+    super();
+  }
 
   public WikiDatabaseDatasource(DataSource dataSource){
     this.dataSource = dataSource;

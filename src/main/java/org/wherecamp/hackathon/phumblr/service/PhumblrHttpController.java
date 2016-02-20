@@ -32,10 +32,14 @@ public class PhumblrHttpController {
 
     @Autowired
     private DataSource dataSource;
+
+    @Autowired
+    private FlickrConfig flickrConfig;
+
     private final static Logger LOGGER = Logger.getLogger(PhumblrHttpController.class);
 
 
-
+/*
     @RequestMapping("/factoryBean")
     @ResponseBody
     public String factoryBean() {
@@ -49,11 +53,11 @@ public class PhumblrHttpController {
         return "DataSource retrieved directly from JNDI: " +
                 new InitialContext().lookup("java:comp/env/jdbc/phumblr");
     }
-
+*/
     @RequestMapping("/live")
     public String operational(@RequestParam(value="lat") Double lat,
                               @RequestParam(value="lon") Double lon){
-        FlickrHotspotRepository repo = new FlickrHotspotRepository(dataSource);
+        FlickrHotspotRepository repo = new FlickrHotspotRepository(dataSource,flickrConfig);
         try {
             HotspotPojo flickrHotspot = repo.getHeatmap(lat, lon);
             if(flickrHotspot!=null && flickrHotspot.flickr!=null && flickrHotspot.flickr.size()>0) {

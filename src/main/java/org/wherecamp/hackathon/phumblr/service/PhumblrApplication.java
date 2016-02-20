@@ -82,4 +82,20 @@ public class PhumblrApplication {
         bean.afterPropertiesSet();
         return (DataSource)bean.getObject();
     }
+
+
+    @Value("${flickrKey}")
+    private String flickrKey;
+
+    @Value("${flickrSecureKey}")
+    private String flickrSecureKey;
+
+    @Bean(destroyMethod="")
+    public FlickrConfig flickrConfig() {
+        LOGGER.info("getting flickr config");
+        FlickrConfig fc = new FlickrConfig();
+        fc.setFlickrKey(flickrKey);
+        fc.setFlickrSecureKey(flickrSecureKey);
+        return fc;
+    }
 }
