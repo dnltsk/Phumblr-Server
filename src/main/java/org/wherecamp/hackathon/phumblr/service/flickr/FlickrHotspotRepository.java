@@ -21,6 +21,8 @@ public class FlickrHotspotRepository {
 
   FlickrConfig flickrConfig;
 
+  FlickrApiDatasource flickrData;
+
   private DataSource dataSource;
   public FlickrHotspotRepository(DataSource dataSource, FlickrConfig flickrConfig){
     this.dataSource = dataSource;
@@ -29,7 +31,7 @@ public class FlickrHotspotRepository {
 
 
 	
-  public HotspotPojo getHeatmap(double lat, double lon) throws SQLException {
+  public HotspotPojo getHeatmap(double lat, double lon, boolean loadURLs, boolean loadWiki) throws SQLException {
     HotspotPojo hotspot = new HotspotPojo();
     FlickrDatabaseDatasource ds = new FlickrDatabaseDatasource(dataSource);
 
@@ -40,8 +42,14 @@ public class FlickrHotspotRepository {
     }
 
     hotspot.hotspotId = hotspotId;
-    hotspot.flickr = loadPhotoUrls(ds, hotspotId);
-    hotspot.wiki = loadWikis(hotspotId);
+    if (loadURLs) {
+      hotspot.flickr = loadPhotoUrls(ds, hotspotId);
+    }else{
+      hotspot.flickr = loadPhotoIds(ds, hotspotId);
+    }
+    if (loadWiki) {
+      hotspot.wiki = loadWikis(hotspotId);
+    }
     LOGGER.info("loaded wikis");
     return hotspot;
   }
@@ -63,13 +71,31 @@ public class FlickrHotspotRepository {
     return wikis;
   }
 
+
+
+  private List<FlickrPojo> loadPhotoIds(FlickrDatabaseDatasource ds, Integer gid) throws SQLException {
+    int maxSize = 320;
+
+    List<FlickrPojo> photos = ds.loadRelevantPhotos(gid, 3);
+
+    LOGGER.info("loadedPhotoUrls");
+    return photos;
+  }
+
   private List<FlickrPojo> loadPhotoUrls(FlickrDatabaseDatasource ds, Integer gid) throws SQLException {
     int maxSize = 320;
+
     List<FlickrPojo> photos = ds.loadRelevantPhotos(gid, 3);
-    FlickrApiDatasource flickrData = new FlickrApiDatasource();
-    flickrData.setFlickrConfig(flickrConfig);
+
+    if (flickrData == null){
+      LOGGER.info("start flickr init");
+      flickrData = new FlickrApiDatasource(flickrConfig);
+      LOGGER.info("init FlickrApiDatasource");
+    }
+
     for(FlickrPojo photo : photos){
       photo.url = flickrData.getPhotoUrl(photo.photoId, maxSize);
+      LOGGER.info("got photo url");
     }
     LOGGER.info("loadedPhotoUrls");
     return photos;

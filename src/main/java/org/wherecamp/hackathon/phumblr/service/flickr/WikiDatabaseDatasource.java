@@ -53,7 +53,7 @@ public class WikiDatabaseDatasource {
 
     LOGGER.info(sql.toString());
 
-    Connection conn = dataSource.getConnection();//PhumblrApplication.openPostgresConnection();
+    Connection conn = dataSource.getConnection();
     Statement stmt = null;
     ResultSet rs = null;
     try{
@@ -91,7 +91,7 @@ public class WikiDatabaseDatasource {
         .append("   h.gid = "+hotspotGid)
         .append("   and ST_Contains(h.geom, w.geom) = False ")
         .append("   and ST_Contains(ST_Buffer(h.geom, "+maxDistanceInMeter+"), w.geom)")
-        .append(" order by ST_Distance(h.geom, w.geom) ")
+        .append(" order by distanceFromHotspotInMeter ")
         .append(" limit " + amount);
 
     LOGGER.info(sql.toString());

@@ -46,20 +46,33 @@ public class PhumblrHttpController {
         return "DataSource retrieved from JNDI using JndiObjectFactoryBean: " + dataSource;
     }
 
-
-    @RequestMapping("/direct")
-    @ResponseBody
-    public String direct() throws NamingException {
-        return "DataSource retrieved directly from JNDI: " +
-                new InitialContext().lookup("java:comp/env/jdbc/phumblr");
-    }
 */
+    @RequestMapping("/simple")
+    @ResponseBody
+    public String simple(@RequestParam(value="lat") Double lat,
+                              @RequestParam(value="lon") Double lon){
+        FlickrHotspotRepository repo = new FlickrHotspotRepository(dataSource,flickrConfig);
+        try {
+            HotspotPojo flickrHotspot = repo.getHeatmap(lat, lon, false, false);
+            if(flickrHotspot!=null && flickrHotspot.flickr!=null && flickrHotspot.flickr.size()>0) {
+                ObjectMapper mapper = createJacksonMapper();
+                String json = mapper.writeValueAsString(flickrHotspot);
+                return json;
+            }
+        } catch (SQLException e) {
+            LOGGER.error("SQL Exception in Controller: " + e.getLocalizedMessage(), e);
+        } catch (JsonProcessingException e) {
+            LOGGER.error("Jackson Exception in Controller: " + e.getLocalizedMessage(), e);
+        }
+        return "{}";
+    }
+
     @RequestMapping("/live")
     public String operational(@RequestParam(value="lat") Double lat,
                               @RequestParam(value="lon") Double lon){
         FlickrHotspotRepository repo = new FlickrHotspotRepository(dataSource,flickrConfig);
         try {
-            HotspotPojo flickrHotspot = repo.getHeatmap(lat, lon);
+            HotspotPojo flickrHotspot = repo.getHeatmap(lat, lon, true, true);
             if(flickrHotspot!=null && flickrHotspot.flickr!=null && flickrHotspot.flickr.size()>0) {
                 ObjectMapper mapper = createJacksonMapper();
                 String json = mapper.writeValueAsString(flickrHotspot);
