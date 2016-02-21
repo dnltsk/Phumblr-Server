@@ -47,9 +47,11 @@ public class WikiDatabaseDatasource {
         .append(" from")
         .append("   wiki w, flickr_heatmap h")
         .append(" where")
-        .append("   h.gid = "+hotspotGid)
+        .append("   h.gid = ")
+        .append(hotspotGid)
         .append("   and ST_Contains(h.geom, w.geom)")
-        .append(" limit " + amount);
+        .append(" limit ")
+        .append(amount);
 
     LOGGER.info(sql.toString());
 
@@ -70,9 +72,15 @@ public class WikiDatabaseDatasource {
       throw e;
     } finally {
       try {
-        rs.close();
-        stmt.close();
-        conn.close();
+        if (rs != null) {
+          rs.close();
+        }
+        if (stmt != null) {
+          stmt.close();
+        }
+        if (conn != null) {
+          conn.close();
+        }
       } catch (SQLException e) {
         LOGGER.error("error while closing stuff: "+e.getLocalizedMessage(), e);
       }
@@ -80,19 +88,21 @@ public class WikiDatabaseDatasource {
   }
 
   public List<WikiPojo> loadWikisAroundHotspot(int hotspotGid, int maxDistanceInMeter, int amount) throws SQLException {
-    StringBuffer sql = new StringBuffer()
+    StringBuilder sql = new StringBuilder()
         .append(" select distinct")
         .append("   w.title, ")
         .append("   ST_Distance(h.geom, w.geom) as distanceFromHotspotInMeter, ")
         .append("   w.sections ")
-        .append(" from")
+        .append(" from ")
         .append("   wiki w, flickr_heatmap h")
-        .append(" where")
-        .append("   h.gid = "+hotspotGid)
+        .append(" where ")
+        .append("   h.gid = ")
+        .append( hotspotGid)
         .append("   and ST_Contains(h.geom, w.geom) = False ")
         .append("   and ST_Contains(ST_Buffer(h.geom, "+maxDistanceInMeter+"), w.geom)")
         .append(" order by distanceFromHotspotInMeter ")
-        .append(" limit " + amount);
+        .append(" limit " )
+        .append(amount);
 
     LOGGER.info(sql.toString());
 
@@ -113,9 +123,15 @@ public class WikiDatabaseDatasource {
       throw e;
     } finally {
       try {
-        rs.close();
-        stmt.close();
-        conn.close();
+        if (rs != null) {
+          rs.close();
+        }
+        if (stmt != null) {
+          stmt.close();
+        }
+        if (conn != null) {
+          conn.close();
+        }
       } catch (SQLException e) {
         LOGGER.error("error while closing stuff: "+e.getLocalizedMessage(), e);
       }
@@ -192,7 +208,7 @@ public class WikiDatabaseDatasource {
 
       while (m.find()) {
         String section_title = m.group(1);
-        if (content != "") temp_sections.add(new String[]{section_title, content});
+        if (!content.equals("")) temp_sections.add(new String[]{section_title, content});
         isContent = false;
         content = "";
       }
