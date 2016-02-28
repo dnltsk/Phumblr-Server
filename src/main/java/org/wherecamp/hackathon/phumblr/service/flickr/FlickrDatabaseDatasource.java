@@ -21,21 +21,21 @@ import java.util.List;
  * Created by danielt on 27.11.15.
  */
 
-@ComponentScan
+@ComponentScan("org.wherecamp.hackathon.phumblr.service")
 @Configuration
 @EnableAutoConfiguration
 @Component
 public class FlickrDatabaseDatasource {
 
     Logger LOGGER = Logger.getLogger(FlickrDatabaseDatasource.class);
-
+    @Autowired
     private DataSource dataSource;
 
     public FlickrDatabaseDatasource(DataSource dataSource){
         this.dataSource = dataSource;
     }
     public FlickrDatabaseDatasource(){
-        this.dataSource = null;
+
 
     }
 

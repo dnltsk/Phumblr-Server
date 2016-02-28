@@ -1,5 +1,9 @@
 package org.wherecamp.hackathon.phumblr.service.flickr;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 import org.wherecamp.hackathon.phumblr.service.FlickrConfig;
 import org.wherecamp.hackathon.phumblr.service.FlickrPojo;
 import org.wherecamp.hackathon.phumblr.service.HotspotPojo;
@@ -15,15 +19,27 @@ import javax.sql.DataSource;
 /**
  * Created by danielt on 27.11.15.
  */
+
+@ComponentScan("org.wherecamp.hackathon.phumblr.service")
+@EnableAutoConfiguration
+@Configuration
 public class FlickrHotspotRepository {
 
   Logger LOGGER = Logger.getLogger(FlickrHotspotRepository.class);
 
+  @Autowired
   FlickrConfig flickrConfig;
 
   FlickrApiDatasource flickrData;
 
+  @Autowired
   private DataSource dataSource;
+
+  public FlickrHotspotRepository(){
+
+    LOGGER.info("construct Repository");
+
+  }
   public FlickrHotspotRepository(DataSource dataSource, FlickrConfig flickrConfig){
     this.dataSource = dataSource;
     this.flickrConfig = flickrConfig;
@@ -54,7 +70,7 @@ public class FlickrHotspotRepository {
     return hotspot;
   }
 
-  private List<WikiPojo> loadWikis(Integer gid) throws SQLException {
+  public List<WikiPojo> loadWikis(Integer gid) throws SQLException {
     List<WikiPojo> wikis = new ArrayList<>();
     int amount = 5;
     int maxDistance = 500;
@@ -65,9 +81,6 @@ public class FlickrHotspotRepository {
       List<WikiPojo> wikisAround = wikiSource.loadWikisAroundHotspot(gid, maxDistance, amount - wikisInside.size());
       wikis.addAll(wikisAround);
     }
-
-
-
     return wikis;
   }
 
@@ -76,7 +89,7 @@ public class FlickrHotspotRepository {
   private List<FlickrPojo> loadPhotoIds(FlickrDatabaseDatasource ds, Integer gid) throws SQLException {
     int maxSize = 320;
 
-    List<FlickrPojo> photos = ds.loadRelevantPhotos(gid, 3);
+    List<FlickrPojo> photos = ds.loadRelevantPhotos(gid, 15);
 
     LOGGER.info("loadedPhotoUrls");
     return photos;
@@ -85,7 +98,7 @@ public class FlickrHotspotRepository {
   private List<FlickrPojo> loadPhotoUrls(FlickrDatabaseDatasource ds, Integer gid) throws SQLException {
     int maxSize = 320;
 
-    List<FlickrPojo> photos = ds.loadRelevantPhotos(gid, 3);
+    List<FlickrPojo> photos = ds.loadRelevantPhotos(gid, 5);
 
     if (flickrData == null){
       LOGGER.info("start flickr init");

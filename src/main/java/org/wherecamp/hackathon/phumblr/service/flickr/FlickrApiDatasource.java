@@ -7,6 +7,10 @@ import com.flickr4java.flickr.photos.PhotosInterface;
 import com.flickr4java.flickr.photos.Size;
 import org.apache.log4j.Logger;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 import org.wherecamp.hackathon.phumblr.service.FlickrConfig;
 
 import java.net.MalformedURLException;
@@ -16,13 +20,16 @@ import java.util.ArrayList;
 /**
  * Created by danielt on 27.11.15.
  */
-
+@ComponentScan("org.wherecamp.hackathon.phumblr.service")
+@EnableAutoConfiguration
+@Configuration
 public class FlickrApiDatasource {
 
   private Logger LOGGER = Logger.getLogger(FlickrApiDatasource.class);
 
   private PhotosInterface flickrInterface;
 
+  @Autowired
   private FlickrConfig flickrConfig;
 
   FlickrApiDatasource(){

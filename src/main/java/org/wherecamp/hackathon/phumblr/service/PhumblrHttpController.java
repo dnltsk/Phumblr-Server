@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.wherecamp.hackathon.phumblr.service.flickr.FlickrHotspotRepository;
 
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Created by danielt on 26.11.15.
@@ -37,14 +38,24 @@ public class PhumblrHttpController {
     private final static Logger LOGGER = Logger.getLogger(PhumblrHttpController.class);
 
 
-/*
-    @RequestMapping("/factoryBean")
+
+    @RequestMapping("/WikiInfo")
     @ResponseBody
-    public String factoryBean() {
-        return "DataSource retrieved from JNDI using JndiObjectFactoryBean: " + dataSource;
+    public String factoryBean(@RequestParam(value="hotspotid") Integer hotspotId) {
+        FlickrHotspotRepository repo = new FlickrHotspotRepository(dataSource,flickrConfig);
+        try {
+           List<WikiPojo> hotspots = repo.loadWikis(hotspotId);
+
+                ObjectMapper mapper = createJacksonMapper();
+                String json = mapper.writeValueAsString(hotspots);
+                return json;
+        } catch (Exception e) {
+            LOGGER.error( e.getLocalizedMessage(), e);
+        }
+        return "generating wiki data failed for id: " + hotspotId;
     }
 
-*/
+
     @RequestMapping("/simple")
     @ResponseBody
     public String simple(@RequestParam(value="lat") Double lat,
