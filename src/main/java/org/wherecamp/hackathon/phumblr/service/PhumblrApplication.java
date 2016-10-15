@@ -13,9 +13,6 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
-/**
- * Created by danielt on 26.11.15.
- */
 @SpringBootApplication
 public class PhumblrApplication {
 
