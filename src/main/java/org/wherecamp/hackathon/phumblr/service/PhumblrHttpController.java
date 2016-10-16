@@ -20,9 +20,6 @@ import org.wherecamp.hackathon.phumblr.service.flickr.FlickrHotspotRepository;
 import java.sql.SQLException;
 import java.util.List;
 
-/**
- * Created by danielt on 26.11.15.
- */
 @ComponentScan
 @Configuration
 @EnableAutoConfiguration

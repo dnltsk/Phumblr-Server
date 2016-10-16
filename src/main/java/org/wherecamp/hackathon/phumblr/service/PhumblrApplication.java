@@ -9,9 +9,6 @@ import org.springframework.context.annotation.Bean;
 
 
 
-/**
- * Created by danielt on 26.11.15.
- */
 @SpringBootApplication
 public class PhumblrApplication {
 
